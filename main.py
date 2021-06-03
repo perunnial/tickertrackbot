@@ -27,9 +27,10 @@ def handle(msg):
             if last_price:
                 prev_close = quote['previousClose']
                 pct_change = 100 * (last_price - prev_close) / prev_close
+                direction = '↑' if pct_change > 0 else '↓'
                 # avoiding percent change available as quote['pChange']
                 # it is a float for positive values, str for negative values
-                response = '{:.2f}'.format(last_price) + ' (' + '{:.2f}'.format(pct_change) + '%)'
+                response = '{:.2f}'.format(last_price) + ' ' + direction + ' ' + '{:.2f}'.format(pct_change) + '%'
             else:
                 response = 'unknown!'
     print(response)
