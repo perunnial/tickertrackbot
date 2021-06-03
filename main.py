@@ -24,7 +24,14 @@ def handle(msg):
         else:
             quote = nse.get_quote(msg_text)
             last_price = quote['lastPrice']
-            response = last_price if last_price else 'unknown!'
+            if last_price:
+                prev_close = quote['previousClose']
+                pct_change = 100 * (last_price - prev_close) / prev_close
+                # avoiding percent change available as quote['pChange']
+                # it is a float for positive values, str for negative values
+                response = '{:.2f}'.format(last_price) + ' (' + '{:.2f}'.format(pct_change) + '%)'
+            else:
+                response = 'unknown!'
     print(response)
     bot.sendMessage(chat_id, response)
 
