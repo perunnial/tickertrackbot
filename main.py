@@ -2,10 +2,12 @@ import os
 import time
 
 from dotenv import load_dotenv
-import urllib
 import telepot
 from telepot.loop import MessageLoop
 from nsetools import Nse
+
+import urllib
+import json
 
 load_dotenv()
 bot = telepot.Bot(os.environ['BOT_TOKEN'])
@@ -19,6 +21,8 @@ def get_nse_quote(ticker):
         print('HTTPError')
     except(urllib.error.URLError):
         print('URLError')
+    except(json.decoder.JSONDecodeError):
+        print('JSONDecodeError')
     except:
         print('Exception')
     return None
@@ -38,12 +42,9 @@ def handle(msg):
             quote = get_nse_quote(msg_text)
             if quote is not None:
                 last_price = quote['lastPrice']
-                prev_close = quote['previousClose']
-                pct_change = 100 * (last_price - prev_close) / prev_close
-                direction = '↑' if pct_change > 0 else '↓'
-                # avoiding percent change available as quote['pChange']
-                # it is a float for positive values, str for negative values
-                response = '{:.2f}'.format(last_price) + ' ' + direction + ' ' + '{:.2f}'.format(pct_change) + '%'
+                pct_change = str(quote['pChange'])
+                direction = '↑' if pct_change[0] != '-' else '↓'
+                response = '{:.2f}'.format(last_price) + ' ' + direction + ' ' + pct_change + '%'
             else:
                 response = 'unknown!'
     print(response)
