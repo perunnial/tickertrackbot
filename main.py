@@ -2,6 +2,7 @@ import os
 import time
 
 from dotenv import load_dotenv
+import urllib
 import telepot
 from telepot.loop import MessageLoop
 from nsetools import Nse
@@ -9,6 +10,18 @@ from nsetools import Nse
 load_dotenv()
 bot = telepot.Bot(os.environ['BOT_TOKEN'])
 nse = Nse()
+
+def get_nse_quote(ticker):
+    try:
+        quote = nse.get_quote(ticker)
+        return quote
+    except(urllib.error.HTTPError):
+        print('HTTPError')
+    except(urllib.error.URLError):
+        print('URLError')
+    except:
+        print('Exception')
+    return None
 
 def handle(msg):
     # pylint: disable=unbalanced-tuple-unpacking
@@ -22,9 +35,9 @@ def handle(msg):
         elif not nse.is_valid_code(msg_text):
             response = 'invalid!'
         else:
-            quote = nse.get_quote(msg_text)
-            last_price = quote['lastPrice']
-            if last_price:
+            quote = get_nse_quote(msg_text)
+            if quote is not None:
+                last_price = quote['lastPrice']
                 prev_close = quote['previousClose']
                 pct_change = 100 * (last_price - prev_close) / prev_close
                 direction = '↑' if pct_change > 0 else '↓'
