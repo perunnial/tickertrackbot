@@ -10,7 +10,7 @@ import tickertracker
 
 load_dotenv()
 bot = telepot.DelegatorBot(
-    os.environ["BOT_TOKEN"],
+    os.environ["TT_BOT_TOKEN"],
     [
         pave_event_space()(
             per_chat_id(),
