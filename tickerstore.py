@@ -6,12 +6,12 @@ class TickerStore:
         if chat_id not in self._db:
             return []
         tickers = self._db[chat_id]
-        return tickers
+        return list(tickers)
 
     def put(self, chat_id, ticker):
         if chat_id not in self._db:
-            self._db[chat_id] = []
-        self._db[chat_id].append(ticker)
+            self._db[chat_id] = set()
+        self._db[chat_id].add(ticker)
 
     def exists(self, chat_id, ticker):
         if chat_id not in self._db:
