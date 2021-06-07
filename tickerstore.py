@@ -1,28 +1,27 @@
 class TickerStore:
+    CHAT_ID_UNINITIALIZED = -1
+
     def __init__(self):
-        self._db = {}
+        self._chat_id = self.CHAT_ID_UNINITIALIZED
+        self._tickers = set()
 
-    def get(self, chat_id):
-        if chat_id not in self._db:
-            return []
-        tickers = self._db[chat_id]
-        return list(tickers)
+    def fetch_tickers(self, chat_id):
+        self._chat_id = chat_id
 
-    def put(self, chat_id, ticker):
-        if chat_id not in self._db:
-            self._db[chat_id] = set()
-        self._db[chat_id].add(ticker)
+    def commit_tickers(self):
+        return
 
-    def exists(self, chat_id, ticker):
-        if chat_id not in self._db:
-            return False
-        return ticker in self._db[chat_id]
+    def get(self):
+        return list(self._tickers)
+
+    def put(self, ticker):
+        self._tickers.add(ticker)
+
+    def exists(self, ticker):
+        return ticker in self._tickers
 
     def remove(self, chat_id, ticker):
-        if chat_id in self._db:
-            self._db[chat_id].remove(ticker)
+        self._tickers.remove(ticker)
 
     def len(self, chat_id):
-        if chat_id not in self._db:
-            return 0
-        return len(self._db[chat_id])
+        return len(self._tickers)
