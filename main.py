@@ -16,7 +16,7 @@ bot = telepot.DelegatorBot(
             per_chat_id(),
             create_open,
             tickertracker.TickerTracker,
-            timeout=os.sys.float_info.max,
+            timeout=300,
         ),
     ],
 )
