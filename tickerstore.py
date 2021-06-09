@@ -12,13 +12,7 @@ class TickerStore:
         load_dotenv()
 
     def open_db(self):
-        self._conn = psycopg2.connect(
-            host=os.environ["TT_POSTGRES_HOST"],
-            port=os.environ["TT_POSTGRES_PORT"],
-            dbname=os.environ["TT_POSTGRES_DBNAME"],
-            user=os.environ["TT_POSTGRES_USER"],
-            password=os.environ["TT_POSTGRES_PASSWORD"],
-        )
+        self._conn = psycopg2.connect(os.environ["TT_DATABASE_URL"])
         self._cur = self._conn.cursor()
 
     def close_db(self):
