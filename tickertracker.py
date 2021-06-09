@@ -1,4 +1,5 @@
 import telepot
+import schedule
 
 import nsehelper
 import tickerstore
@@ -6,10 +7,13 @@ import tickerstore
 
 class TickerTracker(telepot.helper.ChatHandler):
     CHAT_ID_UNINITIALIZED = -1
+    MARKET_CLOSE_TIME = "15:30"
+    MARKET_INDEX = "NIFTY 50"
 
     def __init__(self, *args, **kwargs):
         super(TickerTracker, self).__init__(*args, **kwargs)
         self._store = tickerstore.TickerStore()
+        self._scheduled = False
         self._commands = ["/l", "/a", "/d", "/h"]
         self._callbacks = {}
         for command in self._commands:
@@ -68,12 +72,20 @@ class TickerTracker(telepot.helper.ChatHandler):
         # fetch from db if chat id is uninitialized
         if self._store.chat_id() == self.CHAT_ID_UNINITIALIZED:
             self._store.fetch_tickers(chat_id)
+            # schedule market close notification job after chat is initiated
+            if not self._scheduled:
+                schedule.every().day.at(self.MARKET_CLOSE_TIME).do(self.on_market_close)
+                self._scheduled = True
         print(chat_id, msg_text)
         msg_tokens = msg_text.split()
         if msg_tokens[0] not in self._commands:
             self.on_h()
             return
         self._callbacks[msg_tokens[0]](chat_id, msg_tokens)
+
+    def on_market_close(self):
+        print("market close...")
+        self.send_wrapper(nsehelper.get_output([self.MARKET_INDEX], is_index=True))
 
     def on__idle(self, event):
         # commit to the db on idle event
