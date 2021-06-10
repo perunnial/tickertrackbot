@@ -9,7 +9,9 @@ nse = Nse()
 
 def get_quote(ticker):
     try:
+        print("before get_quote()")
         quote = nse.get_quote(ticker)
+        print("after get_quote()")
         return quote
     except (urllib.error.HTTPError):
         print("HTTPError")
