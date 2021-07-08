@@ -14,7 +14,7 @@ class TickerTracker(telepot.helper.ChatHandler):
         super(TickerTracker, self).__init__(*args, **kwargs)
         self._store = tickerstore.TickerStore()
         self._scheduled = False
-        self._commands = ["/l", "/a", "/d", "/h"]
+        self._commands = ["/l", "/a", "/d"]
         self._callbacks = {}
         for command in self._commands:
             self._callbacks[command] = getattr(self, "on_" + command[1:])
@@ -26,37 +26,37 @@ class TickerTracker(telepot.helper.ChatHandler):
     def on_h(self):
         self.send_wrapper(
             """Commands -
-/l - list ticker collection
-/a - append to ticker collection
-/d - delete from ticker collection"""
+/l - List portfolio
+/a - Add a ticker
+/d - Delete a ticker"""
         )
 
     def on_l(self, chat_id, msg_tokens):
         if len(msg_tokens) != 1:
-            self.send_wrapper("invalid syntax")
+            self.send_wrapper("Invalid syntax!")
             return
         if self._store.len(chat_id):
             self.send_wrapper(nsehelper.get_output(self._store.get()))
 
     def on_a(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
-            self.send_wrapper("invalid syntax")
+            self.send_wrapper("Invalid syntax")
             return
         if not nsehelper.is_valid_code(msg_tokens[1]):
-            self.send_wrapper("invalid ticker")
+            self.send_wrapper("Invalid ticker!")
             return
         self._store.put(msg_tokens[1].upper())
         self.send_wrapper(nsehelper.get_output(self._store.get()))
 
     def on_d(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
-            self.send_wrapper("invalid syntax")
+            self.send_wrapper("Invalid syntax!")
             return
         if not nsehelper.is_valid_code(msg_tokens[1]):
-            self.send_wrapper("invalid ticker")
+            self.send_wrapper("Invalid ticker!")
             return
         if not self._store.exists(msg_tokens[1].upper()):
-            self.send_wrapper("non-existent ticker")
+            self.send_wrapper("Ticker not in portfolio!")
             return
         self._store.remove(chat_id, msg_tokens[1].upper())
         if self._store.len(chat_id):
