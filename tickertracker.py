@@ -79,7 +79,23 @@ class TickerTracker(telepot.helper.ChatHandler):
             self._store.fetch_tickers(chat_id)
             # schedule market close notification job after chat is initiated
             if not self._scheduled:
-                schedule.every().day.at(self.market_close_time).do(self.on_market_close)
+                # schedule only on weekdays
+                # still could be a holiday and markets could be closed
+                schedule.every().monday.at(self.market_close_time).do(
+                    self.on_market_close
+                )
+                schedule.every().tuesday.at(self.market_close_time).do(
+                    self.on_market_close
+                )
+                schedule.every().wednesday.at(self.market_close_time).do(
+                    self.on_market_close
+                )
+                schedule.every().thursday.at(self.market_close_time).do(
+                    self.on_market_close
+                )
+                schedule.every().friday.at(self.market_close_time).do(
+                    self.on_market_close
+                )
                 self._scheduled = True
         print(chat_id, msg_text)
         msg_tokens = msg_text.split()
