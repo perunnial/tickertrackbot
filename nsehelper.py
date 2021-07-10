@@ -1,59 +1,31 @@
-from nsetools import Nse
-
-import urllib
-import json
-
-
-nse = Nse()
+import yfinance as yf
 
 
 def get_quote(ticker):
-    try:
-        quote = nse.get_quote(ticker)
-        return quote
-    except (urllib.error.HTTPError):
-        print("HTTPError")
-    except (urllib.error.URLError):
-        print("URLError")
-    except (json.decoder.JSONDecodeError):
-        print("JSONDecodeError")
-    except:
-        print("Exception")
-    return None
-
-
-def get_index_quote(ticker):
-    try:
-        quote = nse.get_index_quote(ticker)
-        return quote
-    except (urllib.error.HTTPError):
-        print("HTTPError")
-    except (urllib.error.URLError):
-        print("URLError")
-    except (json.decoder.JSONDecodeError):
-        print("JSONDecodeError")
-    except:
-        print("Exception")
-    return None
+    ticker += ".NS"
+    return yf.Ticker(ticker).info
 
 
 def is_valid_code(ticker):
-    return nse.is_valid_code(ticker)
+    ticker += ".NS"
+    try:
+        curr_price = yf.Ticker(ticker).info["currentPrice"]
+    except:
+        return False
+    return True
 
 
-def get_output(tickers, is_index=False):
+def get_output(tickers):
     output = ""
     for ticker in tickers:
         output += ticker + " "
         quote = {}
-        if is_index:
-            quote = get_index_quote(ticker)
-        else:
-            quote = get_quote(ticker)
-        last_price = quote["lastPrice"]
-        pct_change = str(quote["pChange"])
+        quote = get_quote(ticker)
+        curr_price = quote["currentPrice"]
+        prev_close = quote["previousClose"]
+        pct_change = "{:.2f}".format(100 * (curr_price - prev_close) / prev_close)
         direction = "↑" if pct_change[0] != "-" else "↓"
         output += (
-            "{:.2f}".format(last_price) + " " + direction + " " + pct_change + "%\n"
+            "{:.2f}".format(curr_price) + " " + direction + " " + pct_change + "%\n"
         )
     return output
