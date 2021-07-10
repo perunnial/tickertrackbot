@@ -4,6 +4,6 @@
 
 Telegram bot to track NSE stocks.
 
-[@tickertrackbot](https://t.me/tickertrackbot)
+Deployed at [@tickertrackbot](https://t.me/tickertrackbot).
 
 ![](demo.gif)
