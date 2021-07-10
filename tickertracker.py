@@ -1,5 +1,7 @@
+import os
 import telepot
 import schedule
+from dotenv import load_dotenv
 
 import nsehelper
 import tickerstore
@@ -7,12 +9,16 @@ import tickerstore
 
 class TickerTracker(telepot.helper.ChatHandler):
     CHAT_ID_UNINITIALIZED = -1
-    MARKET_CLOSE_TIME = "15:30"
 
     def __init__(self, *args, **kwargs):
         super(TickerTracker, self).__init__(*args, **kwargs)
         self._store = tickerstore.TickerStore()
         self._scheduled = False
+        load_dotenv()
+        if os.environ["TT_ENVIRONMENT"] == "local":
+            self.market_close_time = "15:30"
+        else:
+            self.market_close_time = "10:00"  # heroku timezone is UTC
         self._commands = ["/l", "/a", "/d"]
         self._callbacks = {}
         for command in self._commands:
@@ -73,7 +79,7 @@ class TickerTracker(telepot.helper.ChatHandler):
             self._store.fetch_tickers(chat_id)
             # schedule market close notification job after chat is initiated
             if not self._scheduled:
-                schedule.every().day.at(self.MARKET_CLOSE_TIME).do(self.on_market_close)
+                schedule.every().day.at(self.market_close_time).do(self.on_market_close)
                 self._scheduled = True
         print(chat_id, msg_text)
         msg_tokens = msg_text.split()
