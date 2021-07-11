@@ -3,6 +3,11 @@ import yfinance as yf
 CRORE = 100 * 100 * 1000
 
 
+def get_ticker(ticker):
+    ticker += ".NS"
+    return yf.Ticker(ticker)
+
+
 def get_quote(ticker):
     ticker += ".NS"
     return yf.Ticker(ticker).info
@@ -36,7 +41,8 @@ def get_output(tickers):
 def get_summary(ticker):
     quote = {}
     quote = get_quote(ticker)
-    info_text = quote["longName"] + "\n"
+    info_text = get_output([ticker])
+    info_text += "    " + quote["longName"] + "\n"
     info_text += "    Sector : " + quote["sector"] + "\n"
     info_text += "    Industry : " + quote["industry"] + "\n"
     info_text += (
@@ -53,12 +59,6 @@ def get_summary(ticker):
         + "%\n"
     )
     info_text += (
-        "    Previous Close : "
-        + "{:.2f}".format(quote["regularMarketPreviousClose"])
-        + "\n"
-    )
-    info_text += "    Open : " + "{:.2f}".format(quote["regularMarketOpen"]) + "\n"
-    info_text += (
         "    Day's Range : "
         + "{:.2f}".format(quote["regularMarketDayLow"])
         + " - "
@@ -73,7 +73,6 @@ def get_summary(ticker):
         + "\n"
     )
     info_text += "    Volume : " + "{:,d}".format(quote["regularMarketVolume"]) + "\n"
-    info_text += "    Average Volume : " + "{:,d}".format(quote["averageVolume"]) + "\n"
     return info_text
 
 
@@ -87,3 +86,15 @@ def get_logo_url(ticker):
     quote = {}
     quote = get_quote(ticker)
     return quote["logo_url"]
+
+
+def get_history(ticker):
+    ticker_object = get_ticker(ticker)
+    hist = ticker_object.history(period="5d")
+    hist = hist.reset_index()
+    response = f"-----{ticker}-----\n"
+    for index, row in hist.iterrows():
+        price = "{:.2f}".format(row["Close"])
+        format_date = row["Date"].strftime("%Y/%m/%d")
+        response += f"{format_date}: {price}\n"
+    return response
