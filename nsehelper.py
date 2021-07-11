@@ -75,3 +75,9 @@ def get_summary(ticker):
     info_text += "    Volume : " + "{:,d}".format(quote["regularMarketVolume"]) + "\n"
     info_text += "    Average Volume : " + "{:,d}".format(quote["averageVolume"]) + "\n"
     return info_text
+
+
+def get_description(ticker):
+    quote = {}
+    quote = get_quote(ticker)
+    return quote["longBusinessSummary"]
