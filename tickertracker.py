@@ -76,6 +76,7 @@ class TickerTracker(telepot.helper.ChatHandler):
         if not nsehelper.is_valid_code(msg_tokens[1]):
             self.send_wrapper("Invalid ticker!")
             return
+        self.sender.sendPhoto(nsehelper.get_logo_url(msg_tokens[1].upper()))
         self.send_wrapper(nsehelper.get_description(msg_tokens[1].upper()))
 
     def on_summary(self, chat_id, msg_tokens):
