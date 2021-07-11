@@ -82,6 +82,7 @@ def get_description(ticker):
     quote = get_quote(ticker)
     return quote["longBusinessSummary"]
 
+
 def get_logo_url(ticker):
     quote = {}
     quote = get_quote(ticker)
