@@ -34,9 +34,44 @@ def get_output(tickers):
 
 
 def get_info(ticker):
-    info_text = get_output([ticker])
     quote = {}
     quote = get_quote(ticker)
-    market_cap = "{:,d}".format(int(quote["marketCap"] / CRORE))
-    info_text += "Market Cap = " + market_cap + " crores\n"
+    info_text = quote["longName"] + "\n"
+    info_text += "    Sector : " + quote["sector"] + "\n"
+    info_text += "    Industry : " + quote["industry"] + "\n"
+    info_text += (
+        "    Market Cap : "
+        + "{:,d}".format(int(quote["marketCap"] / CRORE))
+        + " crores\n"
+    )
+    info_text += "    Beta (5Y monthly) : " + "{:.2f}".format(quote["beta"]) + "\n"
+    info_text += "    PE (TTM) : " + "{:.2f}".format(quote["trailingPE"]) + "\n"
+    info_text += "    EPS (TTM) : " + "{:.2f}".format(quote["trailingEps"]) + "\n"
+    info_text += (
+        "    Forward Dividend Yield : "
+        + "{:.2f}".format(100 * quote["dividendYield"])
+        + "%\n"
+    )
+    info_text += (
+        "    Previous Close : "
+        + "{:.2f}".format(quote["regularMarketPreviousClose"])
+        + "\n"
+    )
+    info_text += "    Open : " + "{:.2f}".format(quote["regularMarketOpen"]) + "\n"
+    info_text += (
+        "    Day's Range : "
+        + "{:.2f}".format(quote["regularMarketDayLow"])
+        + " - "
+        + "{:.2f}".format(quote["regularMarketDayHigh"])
+        + "\n"
+    )
+    info_text += (
+        "    52 Week Range : "
+        + "{:.2f}".format(quote["fiftyTwoWeekLow"])
+        + " - "
+        + "{:.2f}".format(quote["fiftyTwoWeekHigh"])
+        + "\n"
+    )
+    info_text += "    Volume : " + "{:,d}".format(quote["regularMarketVolume"]) + "\n"
+    info_text += "    Average Volume : " + "{:,d}".format(quote["averageVolume"]) + "\n"
     return info_text
