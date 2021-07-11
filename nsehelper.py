@@ -60,16 +60,16 @@ def get_summary(ticker):
     )
     info_text += (
         "    Day's Range : "
-        + "{:.2f}".format(quote["regularMarketDayLow"])
+        + "{0:,.2f}".format(quote["regularMarketDayLow"])
         + " - "
-        + "{:.2f}".format(quote["regularMarketDayHigh"])
+        + "{0:,.2f}".format(quote["regularMarketDayHigh"])
         + "\n"
     )
     info_text += (
         "    52 Week Range : "
-        + "{:.2f}".format(quote["fiftyTwoWeekLow"])
+        + "{0:,.2f}".format(quote["fiftyTwoWeekLow"])
         + " - "
-        + "{:.2f}".format(quote["fiftyTwoWeekHigh"])
+        + "{0:,.2f}".format(quote["fiftyTwoWeekHigh"])
         + "\n"
     )
     info_text += "    Volume : " + "{:,d}".format(quote["regularMarketVolume"]) + "\n"
@@ -94,7 +94,7 @@ def get_history(ticker):
     hist = hist.reset_index()
     response = f"-----{ticker}-----\n"
     for index, row in hist.iterrows():
-        price = "{:.2f}".format(row["Close"])
+        price = "{0:,.2f}".format(row["Close"])
         format_date = row["Date"].strftime("%Y/%m/%d")
         response += f"{format_date}: {price}\n"
     return response
