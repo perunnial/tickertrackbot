@@ -19,7 +19,7 @@ class TickerTracker(telepot.helper.ChatHandler):
             self.market_close_time = "15:30"
         else:
             self.market_close_time = "10:00"  # heroku timezone is UTC
-        self._commands = ["/list", "/add", "/delete", "/describe", "/summary"]
+        self._commands = ["/list", "/add", "/delete", "/description", "/summary"]
         self._callbacks = {}
         for command in self._commands:
             self._callbacks[command] = getattr(self, "on_" + command[1:])
@@ -32,9 +32,9 @@ class TickerTracker(telepot.helper.ChatHandler):
         self.send_wrapper(
             """Commands -
 /list - List portfolio
-/add <ticker> - Add a ticker
-/delete <ticker> - Delete a ticker
-/describe <ticker> - Get ticker description
+/add <ticker> - Add a ticker to portfolio
+/delete <ticker> - Delete a ticker from portfolio
+/description <ticker> - Get ticker description
 /summary <ticker> - Get ticker summary"""
         )
 
@@ -69,7 +69,7 @@ class TickerTracker(telepot.helper.ChatHandler):
         if self._store.len(chat_id):
             self.send_wrapper(nsehelper.get_output(self._store.get()))
 
-    def on_describe(self, chat_id, msg_tokens):
+    def on_description(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
             self.send_wrapper("Invalid syntax!")
             return
