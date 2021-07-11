@@ -33,7 +33,7 @@ def get_output(tickers):
     return output
 
 
-def get_info(ticker):
+def get_summary(ticker):
     quote = {}
     quote = get_quote(ticker)
     info_text = quote["longName"] + "\n"
