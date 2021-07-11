@@ -49,7 +49,7 @@ def get_info(ticker):
     info_text += "    EPS (TTM) : " + "{:.2f}".format(quote["trailingEps"]) + "\n"
     info_text += (
         "    Forward Dividend Yield : "
-        + "{:.2f}".format(100 * quote["dividendYield"])
+        + "{:.2f}".format(100 * float(quote["dividendYield"]))
         + "%\n"
     )
     info_text += (
