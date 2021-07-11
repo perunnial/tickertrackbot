@@ -19,7 +19,7 @@ class TickerTracker(telepot.helper.ChatHandler):
             self.market_close_time = "15:30"
         else:
             self.market_close_time = "10:00"  # heroku timezone is UTC
-        self._commands = ["/l", "/a", "/d"]
+        self._commands = ["/l", "/a", "/d", "/g"]
         self._callbacks = {}
         for command in self._commands:
             self._callbacks[command] = getattr(self, "on_" + command[1:])
@@ -33,7 +33,8 @@ class TickerTracker(telepot.helper.ChatHandler):
             """Commands -
 /l - List portfolio
 /a - Add a ticker
-/d - Delete a ticker"""
+/d - Delete a ticker
+/g - Get ticker info"""
         )
 
     def on_l(self, chat_id, msg_tokens):
@@ -66,6 +67,15 @@ class TickerTracker(telepot.helper.ChatHandler):
         self._store.remove(chat_id, msg_tokens[1].upper())
         if self._store.len(chat_id):
             self.send_wrapper(nsehelper.get_output(self._store.get()))
+
+    def on_g(self, chat_id, msg_tokens):
+        if len(msg_tokens) != 2:
+            self.send_wrapper("Invalid syntax!")
+            return
+        if not nsehelper.is_valid_code(msg_tokens[1]):
+            self.send_wrapper("Invalid ticker!")
+            return
+        self.send_wrapper(nsehelper.get_info(msg_tokens[1].upper()))
 
     def on_chat_message(self, msg):
         # pylint: disable=unbalanced-tuple-unpacking

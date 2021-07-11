@@ -1,5 +1,7 @@
 import yfinance as yf
 
+CRORE = 100 * 100 * 1000
+
 
 def get_quote(ticker):
     ticker += ".NS"
@@ -29,3 +31,12 @@ def get_output(tickers):
             "{:.2f}".format(curr_price) + " " + direction + " " + pct_change + "%\n"
         )
     return output
+
+
+def get_info(ticker):
+    info_text = get_output([ticker])
+    quote = {}
+    quote = get_quote(ticker)
+    market_cap = "{:,d}".format(int(quote["marketCap"] / CRORE))
+    info_text += "Market Cap = " + market_cap + " crores\n"
+    return info_text
