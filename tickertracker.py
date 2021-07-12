@@ -26,6 +26,8 @@ class TickerTracker(telepot.helper.ChatHandler):
             "/description",
             "/summary",
             "/history",
+            "/dividends",
+            "/splits",
         ]
         self._callbacks = {}
         for command in self._commands:
@@ -43,7 +45,9 @@ class TickerTracker(telepot.helper.ChatHandler):
 /delete <ticker> - Delete a ticker from portfolio
 /description <ticker> - Get ticker description
 /summary <ticker> - Get ticker summary
-/history <ticker> - Get ticker history"""
+/history <ticker> - Get ticker history
+/dividends <ticker> - Get ticker dividends
+/splits <ticker> - Get ticker splits"""
         )
 
     def on_list(self, chat_id, msg_tokens):
@@ -105,6 +109,24 @@ class TickerTracker(telepot.helper.ChatHandler):
             self.send_wrapper("Invalid ticker!")
             return
         self.send_wrapper(nsehelper.get_history(msg_tokens[1].upper()))
+
+    def on_dividends(self, chat_id, msg_tokens):
+        if len(msg_tokens) != 2:
+            self.send_wrapper("Invalid syntax!")
+            return
+        if not nsehelper.is_valid_code(msg_tokens[1]):
+            self.send_wrapper("Invalid ticker!")
+            return
+        self.send_wrapper(nsehelper.get_dividends(msg_tokens[1].upper()))
+
+    def on_splits(self, chat_id, msg_tokens):
+        if len(msg_tokens) != 2:
+            self.send_wrapper("Invalid syntax!")
+            return
+        if not nsehelper.is_valid_code(msg_tokens[1]):
+            self.send_wrapper("Invalid ticker!")
+            return
+        self.send_wrapper(nsehelper.get_splits(msg_tokens[1].upper()))
 
     def on_chat_message(self, msg):
         # pylint: disable=unbalanced-tuple-unpacking

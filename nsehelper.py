@@ -1,6 +1,7 @@
 import yfinance as yf
 
 CRORE = 100 * 100 * 1000
+PD_MAX_ROWS = 10
 
 
 def get_ticker(ticker):
@@ -90,7 +91,7 @@ def get_logo_url(ticker):
 
 def get_history(ticker):
     ticker_object = get_ticker(ticker)
-    hist = ticker_object.history(period="5d")
+    hist = ticker_object.history(period="5d", actions=False)
     hist = hist.reset_index()
     response = f"-----{ticker}-----\n"
     for index, row in hist.iterrows():
@@ -98,3 +99,15 @@ def get_history(ticker):
         format_date = row["Date"].strftime("%Y/%m/%d")
         response += f"{format_date}: {price}\n"
     return response
+
+
+def get_dividends(ticker):
+    ticker_object = get_ticker(ticker)
+    dividends = ticker_object.dividends
+    return dividends.to_string(header=False, max_rows=PD_MAX_ROWS)
+
+
+def get_splits(ticker):
+    ticker_object = get_ticker(ticker)
+    splits = ticker_object.splits
+    return splits.to_string(header=False, max_rows=PD_MAX_ROWS)
