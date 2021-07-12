@@ -111,3 +111,42 @@ def get_splits(ticker):
     ticker_object = get_ticker(ticker)
     splits = ticker_object.splits
     return splits.to_string(header=False, max_rows=PD_MAX_ROWS)
+
+
+def get_sustainability(ticker):
+    ticker_object = get_ticker(ticker)
+    sustainability = ticker_object.sustainability
+    # TODO catch NoneType exceptions
+    sustainability = sustainability.reset_index()
+    e = 0
+    s = 0
+    g = 0
+    t = 0
+    p = 0
+    c = 0
+    for index, row in sustainability.iterrows():
+        if row[0] == "environmentScore":
+            e = row[1]
+        elif row[0] == "socialScore":
+            s = row[1]
+        elif row[0] == "governanceScore":
+            g = row[1]
+        elif row[0] == "totalEsg":
+            t = row[1]
+        elif row[0] == "percentile":
+            p = row[1]
+        elif row[0] == "highestControversy":
+            c = row[1]
+    response = f"-----{ticker}-----\n"
+    response += (
+        "    Total ESG Risk score : "
+        + str(round(t))
+        + " ("
+        + str(round(p))
+        + "th percentile)\n"
+    )
+    response += "    Environment Risk Score : " + str(round(e, 1)) + "\n"
+    response += "    Social Risk Score : " + str(round(s, 1)) + "\n"
+    response += "    Governance Risk Score : " + str(round(g, 1)) + "\n"
+    response += "    Controversy Level : " + str(round(c, 1)) + "\n"
+    return response

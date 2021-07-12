@@ -28,6 +28,7 @@ class TickerTracker(telepot.helper.ChatHandler):
             "/history",
             "/dividends",
             "/splits",
+            "/sustainability",
         ]
         self._callbacks = {}
         for command in self._commands:
@@ -47,7 +48,8 @@ class TickerTracker(telepot.helper.ChatHandler):
 /summary - Get ticker summary
 /history - Get ticker history
 /dividends - Get ticker dividends
-/splits - Get ticker splits"""
+/splits - Get ticker splits
+/sustainability - Get ticker sustainability"""
         )
 
     def on_list(self, chat_id, msg_tokens):
@@ -125,6 +127,15 @@ class TickerTracker(telepot.helper.ChatHandler):
             return
         self.send_wrapper(nsehelper.get_splits(msg_tokens[1].upper()))
 
+    def on_sustainability(self, chat_id, msg_tokens):
+        if len(msg_tokens) != 2:
+            self.send_wrapper("Invalid syntax. Usage : /<command> <ticker>")
+            return
+        if not nsehelper.is_valid_code(msg_tokens[1]):
+            self.send_wrapper("Invalid ticker : " + msg_tokens[1])
+            return
+        self.send_wrapper(nsehelper.get_sustainability(msg_tokens[1].upper()))
+        
     def on_chat_message(self, msg):
         # pylint: disable=unbalanced-tuple-unpacking
         content_type, chat_type, chat_id = telepot.glance(msg)
