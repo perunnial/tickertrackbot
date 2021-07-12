@@ -41,41 +41,38 @@ class TickerTracker(telepot.helper.ChatHandler):
         self.send_wrapper(
             """Commands -
 /list - List portfolio
-/add <ticker> - Add a ticker to portfolio
-/delete <ticker> - Delete a ticker from portfolio
-/description <ticker> - Get ticker description
-/summary <ticker> - Get ticker summary
-/history <ticker> - Get ticker history
-/dividends <ticker> - Get ticker dividends
-/splits <ticker> - Get ticker splits"""
+/add - Add a ticker to portfolio
+/delete - Delete a ticker from portfolio
+/description - Get ticker description
+/summary - Get ticker summary
+/history - Get ticker history
+/dividends - Get ticker dividends
+/splits - Get ticker splits"""
         )
 
     def on_list(self, chat_id, msg_tokens):
-        if len(msg_tokens) != 1:
-            self.send_wrapper("Invalid syntax!")
-            return
         if self._store.len(chat_id):
             self.send_wrapper(nsehelper.get_output(self._store.get()))
 
     def on_add(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
-            self.send_wrapper("Invalid syntax!")
+            self.send_wrapper("Invalid syntax. Usage : /<command> <ticker>")
             return
         if not nsehelper.is_valid_code(msg_tokens[1]):
-            self.send_wrapper("Invalid ticker!")
+            self.send_wrapper("Invalid ticker : " + msg_tokens[1])
             return
         self._store.put(msg_tokens[1].upper())
         self.send_wrapper(nsehelper.get_output(self._store.get()))
 
     def on_delete(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
-            self.send_wrapper("Invalid syntax!")
+            self.send_wrapper("Invalid syntax. Usage : /<command> <ticker>")
             return
         if not nsehelper.is_valid_code(msg_tokens[1]):
-            self.send_wrapper("Invalid ticker!")
+            self.send_wrapper("Invalid ticker : " + msg_tokens[1])
             return
         if not self._store.exists(msg_tokens[1].upper()):
-            self.send_wrapper("Ticker not in portfolio!")
+            self.send_wrapper("Ticker (" + msg_tokens[1].upper() + ") not in portfolio")
             return
         self._store.remove(chat_id, msg_tokens[1].upper())
         if self._store.len(chat_id):
@@ -83,10 +80,10 @@ class TickerTracker(telepot.helper.ChatHandler):
 
     def on_description(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
-            self.send_wrapper("Invalid syntax!")
+            self.send_wrapper("Invalid syntax. Usage : /<command> <ticker>")
             return
         if not nsehelper.is_valid_code(msg_tokens[1]):
-            self.send_wrapper("Invalid ticker!")
+            self.send_wrapper("Invalid ticker : " + msg_tokens[1])
             return
         # pylint: disable=no-member
         self.sender.sendPhoto(nsehelper.get_logo_url(msg_tokens[1].upper()))
@@ -94,37 +91,37 @@ class TickerTracker(telepot.helper.ChatHandler):
 
     def on_summary(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
-            self.send_wrapper("Invalid syntax!")
+            self.send_wrapper("Invalid syntax. Usage : /<command> <ticker>")
             return
         if not nsehelper.is_valid_code(msg_tokens[1]):
-            self.send_wrapper("Invalid ticker!")
+            self.send_wrapper("Invalid ticker : " + msg_tokens[1])
             return
         self.send_wrapper(nsehelper.get_summary(msg_tokens[1].upper()))
 
     def on_history(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
-            self.send_wrapper("Invalid syntax!")
+            self.send_wrapper("Invalid syntax. Usage : /<command> <ticker>")
             return
         if not nsehelper.is_valid_code(msg_tokens[1]):
-            self.send_wrapper("Invalid ticker!")
+            self.send_wrapper("Invalid ticker : " + msg_tokens[1])
             return
         self.send_wrapper(nsehelper.get_history(msg_tokens[1].upper()))
 
     def on_dividends(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
-            self.send_wrapper("Invalid syntax!")
+            self.send_wrapper("Invalid syntax. Usage : /<command> <ticker>")
             return
         if not nsehelper.is_valid_code(msg_tokens[1]):
-            self.send_wrapper("Invalid ticker!")
+            self.send_wrapper("Invalid ticker : " + msg_tokens[1])
             return
         self.send_wrapper(nsehelper.get_dividends(msg_tokens[1].upper()))
 
     def on_splits(self, chat_id, msg_tokens):
         if len(msg_tokens) != 2:
-            self.send_wrapper("Invalid syntax!")
+            self.send_wrapper("Invalid syntax. Usage : /<command> <ticker>")
             return
         if not nsehelper.is_valid_code(msg_tokens[1]):
-            self.send_wrapper("Invalid ticker!")
+            self.send_wrapper("Invalid ticker : " + msg_tokens[1])
             return
         self.send_wrapper(nsehelper.get_splits(msg_tokens[1].upper()))
 
