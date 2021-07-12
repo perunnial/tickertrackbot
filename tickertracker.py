@@ -135,7 +135,7 @@ class TickerTracker(telepot.helper.ChatHandler):
             self.send_wrapper("Invalid ticker : " + msg_tokens[1])
             return
         self.send_wrapper(nsehelper.get_sustainability(msg_tokens[1].upper()))
-        
+
     def on_chat_message(self, msg):
         # pylint: disable=unbalanced-tuple-unpacking
         content_type, chat_type, chat_id = telepot.glance(msg)
